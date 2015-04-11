@@ -1,4 +1,6 @@
-package Structure
+package Structure.Cellery
+
+import Structure.Cells.Cell
 
 /**
  * Created by zach on 4/5/15.
