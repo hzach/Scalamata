@@ -1,56 +1,103 @@
 package Structure.Cells
 
 /**
- * Created by zach on 4/5/15.
+ * TODO: Doc.
  */
+trait Cell[U <: Cell[U]] { self =>
+  /**
+   *
+   */
+  val state: Byte
 
-abstract class Cell {
+  /**
+   *
+   */
+  val min: Byte = 0
 
-  val min: Byte
-
+  /**
+   *
+   */
   val max: Byte
 
-  def next: Cell
+  /**
+   *
+   * @return
+   */
+  def next: Cell[U] = {
+    val m = this.max
+    val s = this.state
+    if (s < max)
+      new Cell[U] {
+        override val max: Byte = m
+        override val state: Byte = (s + 1).toByte
+      }
+    else
+      this
+  }
 
-  def prev: Cell
+  /**
+   *
+   * @return
+   */
+  def prev: Cell[U] = {
+    val m = this.max
+    val s = this.state
+    if (s > min)
+      new Cell[U] {
+        override val max: Byte = m
+        override val state: Byte = (s - 1).toByte
+      }
+    else
+      this
+  }
 
-  def minimize: Cell
+  /**
+   *
+   * @return
+   */
+  def minimize: Cell[U] = {
+    val s = this.max
+    val i = this.min
+    new Cell[U] {
+      override val state: Byte = i
+      override val max: Byte = s
+    }
+  }
 
-  def maximize: Cell
+  /**
+   *
+   * @return
+   */
+  def maximize: Cell[U] = {
+    val s = this.max
+    new Cell[U] {
+      override val state: Byte = s
+      override val max: Byte = s
+    }
+  }
+
+  override def toString: String = state.toString
 
 }
 
-class Binary(state: Byte) extends Cell {
+/**
+ * TODO: Doc
+ * @param state
+ */
+case class Binary(state: Byte) extends Cell[Binary] { override val max: Byte = 1 }
 
-  override val min: Byte = 0
+/**
+ * TODO: Doc
+ * @param state
+ */
+case class Tertiary(state: Byte) extends Cell[Tertiary] { override val max: Byte = 2 }
 
-  override val max: Byte = 1
-
-  override def prev: Cell = new Binary(0)
-
-  override def next: Cell = new Binary(1)
-
-  override def minimize: Cell = next
-
-  override def maximize: Cell = prev
-
-}
-
-class Tertiary(state: Byte) extends Cell {
-
-  override val min: Byte = _
-
-  override val max: Byte = _
-
-  override def prev: Cell = if (state > min) new Tertiary( (state - 1 ).toByte ) else this
-
-  override def next: Cell = if (state < max) new Tertiary( (state + 1 ).toByte ) else this
-
-  override def minimize: Cell = new Tertiary(min)
-
-  override def maximize: Cell = new Tertiary(max)
-
-}
+/**
+ * TODO: Doc
+ * @param state
+ * @param max
+ */
+case class nAry(state: Byte, max: Byte = Byte.MaxValue) extends Cell[nAry]
 
 
 
