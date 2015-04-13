@@ -1,8 +1,8 @@
 package Structure.Cellery
 
-import Structure.Cells.Cell
+import Structure.Cells._
 
-trait CellArray[U<:Cell] {
+trait CellArray[U <: Cell[U]] {
 
   /**
    * the number of dimensions of this CellArray. Requires that dim is
@@ -10,20 +10,18 @@ trait CellArray[U<:Cell] {
    */
   val dim: Int
 
-  val cells: Map[List[Int],Cell]
+  val cells: Map[List[Int], Cell[U]]
 
   /**
    *
    * @param pos
    * @return
    */
-  def cellAt(pos: List[Int]): Cell = {
+  def cellAt(pos: List[Int]): Cell[U] = {
     require(pos.length == dim)
     cells(pos)
   }
-
   //def neighbors(pos: List[Int]): Cell
-
 }
 
 /**
@@ -31,42 +29,38 @@ trait CellArray[U<:Cell] {
  */
 object CellArray {
 
-  abstract class CellArray1D extends CellArray[CellArray1D] {
-    override val dim: Int = 1
-  }
-
-  abstract class CellArray2D extends CellArray[CellArray2D] {
-    override val dim: Int = 2
-  }
-
-  abstract class CellArray3D extends CellArray[CellArray3D] {
-    override val dim: Int = 3
-  }
-
   /**
    *
    * @param cellVec
    * @return
    */
-  def apply(dim: Int, bounds: List[Int], cellVec: Vector[Cell]): CellArray = {
-    require(bounds.length == dim && dim > 0)
+  def apply[U <: Cell[U]](bounds: List[Int], cellVec: Vector[Cell[U]]): CellArray[U] = {
+    require(bounds.length > 0)
 
-    dim match {
-      case 1 =>
-        new CellArray1D {
-          override val cells: Map[List[Int], Cell] = ???
-        }
+    /**
+     *
+     * @param bounds
+     * @param acc
+     * @return
+     */
+    def collect(bounds: List[Int], acc: List[List[Int]]): List[List[Int]] = bounds match {
+      case Nil => acc
+      case b::bs => {
+        val more: List[List[Int]] =
+          for {
+            a <- acc
+            c <- 0 until b
+          } yield c :: a
+          collect(bs, more)
+      }
+    }
 
-      case 2 =>
-        new CellArray2D {
-          override val cells: Map[List[Int], Cell] = ???
-        }
-
-      case 3 =>
-        new CellArray3D {
-          override val cells: Map[List[Int], Cell] = ???
-        }
+    /**
+     * 
+     */
+    new CellArray[U] {
+      override val dim = bounds.length
+      override val cells: Map[List[Int], Cell[U]] = (collect(bounds, List(Nil)) zip cellVec).toMap
     }
   }
-
 }
