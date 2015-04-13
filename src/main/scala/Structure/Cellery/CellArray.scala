@@ -2,37 +2,27 @@ package Structure.Cellery
 
 import Structure.Cells.Cell
 
-trait CellArray {
-  
-  //type CellArray = Either[List[CellArray], List[Cell]]
+trait CellArray[U<:Cell] {
+
   /**
    * the number of dimensions of this CellArray. Requires that dim is
    * at least 1.
    */
   val dim: Int
 
-  //Need to implement topology
-  //val topology: Topology
-
-  val cells: Either[List[CellArray], List[Cell]]
+  val cells: Map[List[Int],Cell]
 
   /**
    *
    * @param pos
    * @return
    */
-  def getCell(pos: List[Int]): Cell = {
+  def cellAt(pos: List[Int]): Cell = {
     require(pos.length == dim)
-
-    def collect(pos: List[Int], c: CellArray): Cell = c.cells match {
-      case Right(r) => r(pos.head)
-      case Left(l) => collect(pos.tail, l(pos.head))
-    }
-
-    collect(pos, this)
+    cells(pos)
   }
 
-  def neighbors(coord: Vector[Int]): Cell
+  //def neighbors(pos: List[Int]): Cell
 
 }
 
@@ -41,23 +31,42 @@ trait CellArray {
  */
 object CellArray {
 
-  abstract class CellArray1D extends CellArray {
+  abstract class CellArray1D extends CellArray[CellArray1D] {
     override val dim: Int = 1
   }
 
-  abstract class CellArray2D extends CellArray {
+  abstract class CellArray2D extends CellArray[CellArray2D] {
     override val dim: Int = 2
   }
 
-  abstract class CellArray3D extends CellArray {
+  abstract class CellArray3D extends CellArray[CellArray3D] {
     override val dim: Int = 3
   }
 
   /**
    *
-   * @param cells
+   * @param cellVec
    * @return
    */
-  def apply(cells: Cell*): CellArray = ???
+  def apply(dim: Int, bounds: List[Int], cellVec: Vector[Cell]): CellArray = {
+    require(bounds.length == dim && dim > 0)
+
+    dim match {
+      case 1 =>
+        new CellArray1D {
+          override val cells: Map[List[Int], Cell] = ???
+        }
+
+      case 2 =>
+        new CellArray2D {
+          override val cells: Map[List[Int], Cell] = ???
+        }
+
+      case 3 =>
+        new CellArray3D {
+          override val cells: Map[List[Int], Cell] = ???
+        }
+    }
+  }
 
 }
