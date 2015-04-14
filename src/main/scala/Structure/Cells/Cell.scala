@@ -4,6 +4,7 @@ package Structure.Cells
  * TODO: Doc.
  */
 trait Cell[U <: Cell[U]] { self =>
+
   /**
    *
    */
@@ -23,58 +24,47 @@ trait Cell[U <: Cell[U]] { self =>
    *
    * @return
    */
-  def next: Cell[U] = {
-    val m = this.max
-    val s = this.state
-    if (s < max)
+  def next: Cell[U] =
+    if (self.state < max)
       new Cell[U] {
-        override val max: Byte = m
-        override val state: Byte = (s + 1).toByte
+        override val max: Byte = self.max
+        override val state: Byte = (self.state + 1).toByte
       }
     else
       this
-  }
 
   /**
    *
    * @return
    */
-  def prev: Cell[U] = {
-    val m = this.max
-    val s = this.state
-    if (s > min)
+  def prev: Cell[U] =
+    if (self.state > min)
       new Cell[U] {
-        override val max: Byte = m
-        override val state: Byte = (s - 1).toByte
+        override val max: Byte = self.max
+        override val state: Byte = (self.state - 1).toByte
       }
     else
       this
-  }
 
   /**
    *
    * @return
    */
-  def minimize: Cell[U] = {
-    val s = this.max
-    val i = this.min
+  def minimize: Cell[U] =
     new Cell[U] {
-      override val state: Byte = i
-      override val max: Byte = s
+      override val state: Byte = self.min
+      override val max: Byte = self.max
     }
-  }
 
   /**
    *
    * @return
    */
-  def maximize: Cell[U] = {
-    val s = this.max
+  def maximize: Cell[U] =
     new Cell[U] {
-      override val state: Byte = s
-      override val max: Byte = s
+      override val state: Byte = self.max
+      override val max: Byte = self.max
     }
-  }
 
   override def toString: String = state.toString
 
