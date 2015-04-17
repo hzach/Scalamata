@@ -56,6 +56,13 @@ trait CellArray[U <: Cell[U]] { self =>
   }
 
   /**
+   *
+   * @param center
+   * @return
+   */
+  def subSet(f: (List[Int], List[Int]) => Boolean)(center: Int*): CArray = ???
+
+  /**
    * Increments the cell a position pos by one Byte
    * and returns a new CellArray with this new Cell
    * @param pos
@@ -75,15 +82,6 @@ trait CellArray[U <: Cell[U]] { self =>
     val updatedCell = cellAt(pos.toList).prev
     updatedCellArray(updatedCell, pos.toList)
   }
-
-  /**
-   * Retrieves the Cells about a point pos in the CellArray
-   * according to some neighborhood geometry
-   * TODO: Need to Implement unmet dependency: Topology
-   * @param pos
-   * @return
-   */
-  def neighbors(pos: List[Int]): CArray = ???
 
   /**
    *
