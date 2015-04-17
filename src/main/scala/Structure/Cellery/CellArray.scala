@@ -45,22 +45,24 @@ trait CellArray[U <: Cell[U]] { self =>
    * @return
    */
   private def updatedCellArray(updatedCell: C, pos: List[Int]): CArray = {
-
     new CArray {
-
       override val cells: Map[List[Int], C] = self.cells.updated(pos, updatedCell)
-
       override val dim: Int = self.dim
     }
-
   }
 
   /**
    *
-   * @param center
+   * @param f
    * @return
    */
-  def subSet(f: (List[Int], List[Int]) => Boolean)(center: Int*): CArray = ???
+  def subSet(f: List[Int] => List[Int] => Int)(r: Int, center: Int*): CArray = {
+    val d = f(center.toList)
+    new CArray{
+      override val dim = self.dim
+      override val cells = self.cells filter ( x =>  d(x._1) <= r)
+    }
+  }
 
   /**
    * Increments the cell a position pos by one Byte

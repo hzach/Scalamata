@@ -9,6 +9,6 @@ trait Automaton[CellArray] {
 
   def unit[U](x: U): Automaton[U]
 
-  def flatMap[U](f: CellArray => Cell): Automaton[U]
+  def flatMap[U](f: CellArray => Automaton[U]): Automaton[U]
 
 }
